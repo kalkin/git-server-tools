@@ -5,11 +5,21 @@ SCRIPT=$(readlink -f "$0")
 # Absolute path this script is in, thus /home/user/bin
 SCRIPTPATH=$(dirname "$SCRIPT")
 BASEPATH=$(dirname "$SCRIPTPATH")
+update_submodule(){
+    cd "$BASEPATH" > /dev/null || (echo "Couldn't cd in $BASEPATH" >&2 && exit 2)
+    git submodule update --remote --merge "$1"
+    git add "$1"
+    if  ! git commit --quiet --author "$AUTHOR" --message "Update submodules $1" 1> /dev/null 2>&1; then
+        echo submodule "$1" did not change >&2
+    fi
+}
 
 if "$SCRIPTPATH/check-permissions" admin; then
-    "$BASEPATH/update"
+    update_submodule bin || echo "Submodule bin did not change" >&2
+    update_submodule thinssh || echo "Submodule thinssh did not change" >&2
 else
-    echo "Not allowed" >&2
+    echo "permission denied" >&2
+    exit 2
 fi
 
 

@@ -53,22 +53,6 @@ if [ ! -f host_key ]; then
 fi
 git add host_key host_key.pub
 git commit --author "$AUTHOR" --message "Add ssh key" --signoff
-echo "#!/bin/sh
-set -e
-AUTHOR=\"Marvin the Paranoid Android <marvin@example.com>\" 
-update_submodule(){
-    git submodule update --remote --merge \"\$1\"
-    git add \"\$1\"
-    if  ! git commit --quiet --author \"\$AUTHOR\" --message \"Update submodules \$1\" 2>&1 1> /dev/null; then
-        echo submodule \"\$1\" did not change >&2
-    fi
-}
-update_submodule bin
-update_submodule thinssh
-" >> update
-chmod +x update
-git add update
-git commit --author "$AUTHOR" --message "Add update script" --signoff
 rm install
 
 #############################################################################
