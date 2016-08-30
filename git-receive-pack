@@ -12,6 +12,7 @@ ID="$USER_TOKEN"
 ORGA=$(echo "$1"|cut -d'/' -f-2)
 ORGA=$(basename "$ORGA")
 REPO=$(echo "$1"|cut -d'/' -f3-)
+REPO="$REPO.git"
 
 "$SCRIPTPATH"/create-id "$ID" 2>/dev/null 
 log() {
