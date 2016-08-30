@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -e
+if [ -z "${USER_TOKEN}" ]; then
+    echo "No user token provided" >&2; exit 1
+fi
+
+
+ID="$USER_TOKEN"
+ORGANIZATION=$1
+
+# Absolute path to this script, e.g. /home/user/bin/foo.sh
+SCRIPT=$(readlink -f "$0")
+# Absolute path this script is in, thus /home/user/bin
+SCRIPTPATH=$(dirname "$SCRIPT")
+BASEPATH=$(dirname "$SCRIPTPATH")
+
+mkdir -p "$BASEPATH/data/ids/$ID"
+ln -s "../../repos/$ORGANIZATION" "$BASEPATH/data/ids/$ID/$ORGANIZATION"
+
+# vim: set: ft=SHELL

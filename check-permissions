@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+if [ -z "${USER_TOKEN}" ]; then
+    echo "No user token provided" >&2; exit 1
+fi
+
+# Absolute path to this script, e.g. /home/user/bin/foo.sh
+SCRIPT=$(readlink -f "$0")
+# Absolute path this script is in, thus /home/user/bin
+SCRIPTPATH=$(dirname "$SCRIPT")
+BASEPATH=$(dirname "$SCRIPTPATH")
+DATAPATH="$BASEPATH/data"
+
+ID="$USER_TOKEN"
+ORGA=$1
+ORGA_PATH="$DATAPATH/ids/$ID/$ORGA"
+echo "$ORGA_PATH"
+
+if [ -d "$ORGA_PATH" ]; then
+    exit 0
+else
+    exit 1
+fi
+
