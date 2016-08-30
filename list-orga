@@ -14,4 +14,4 @@ if [ ! -d "$ORGA_PATH" ]; then
     exit 1
 fi
 
-ls -1 "$ORGA_PATH"
+find "$ORGA_PATH" -maxdepth 1 -name "*.git" |sed -e's/.git\s*$//'
