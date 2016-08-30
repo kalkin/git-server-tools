@@ -46,11 +46,10 @@ if "$SCRIPTPATH/check-permissions" "$ORGA" ; then
     log "Preparing push to $REPOPATH/$ORGA/$REPO"
     git-receive-pack "$REPOPATH/$ORGA/$REPO"
 else
-    if "$SCRIPTPATH/is-abandoned" "$ORGA"; then
-        "$SCRIPTPATH/own-orga" "$ORGA" > /dev/null
+    if "$SCRIPTPATH/own-orga" "$ORGA" > /dev/null; then
         log "Preparing push to $REPOPATH/$ORGA/$REPO"
         git-receive-pack "$REPOPATH/$ORGA/$REPO"
     fi
-    echo Not enough permissions
-    exit 1
+    echo permission denied >&2
+    exit 2
 fi
