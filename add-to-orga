@@ -22,5 +22,4 @@ OTHER_TOKEN="$2"
 "$SCRIPTPATH/check-permissions" "$ORGA"
 [ ! -d "$DATAPATH/ids/$OTHER_TOKEN" ] && mkdir -p "$DATAPATH/ids/$OTHER_TOKEN"
 ln -s "../../repos/$ORGA" "$DATAPATH/ids/$OTHER_TOKEN/$ORGA"
-echo "Orga $ORGANIZATION is now owned by $OTHER_TOKEN"
 exit 0
