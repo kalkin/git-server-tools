@@ -19,10 +19,10 @@ update_submodule(){
 
 if "$SCRIPTPATH/check-permissions" admin; then
     cd "$REPOPATH/admin/git-server-tools.git"
-    git fetch --quiet origin master:master
+    git fetch --force --quiet origin master:master
     update_submodule bin || echo "Submodule bin did not change" >&2
     cd "$REPOPATH/admin/thinssh.git"
-    git fetch --quiet origin master:master
+    git fetch --force --quiet origin master:master
     update_submodule thinssh || echo "Submodule thinssh did not change" >&2
 else
     echo "permission denied" >&2
