@@ -4,8 +4,6 @@ set -e
 if [ -z "${USER_TOKEN}" ]; then
     echo "No user token provided" >&2; exit 1
 fi
-
-
 ID="$USER_TOKEN"
 ORGANIZATION=$1
 
@@ -15,7 +13,10 @@ SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 BASEPATH=$(dirname "$SCRIPTPATH")
 
+
+
 mkdir -p "$BASEPATH/data/ids/$ID"
 ln -s "../../repos/$ORGANIZATION" "$BASEPATH/data/ids/$ID/$ORGANIZATION"
+echo "Orga $ORGANIZATION is now owned by $ID"
 
 # vim: set: ft=SHELL
