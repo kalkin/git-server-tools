@@ -8,10 +8,16 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 BASEPATH=$(dirname "$SCRIPTPATH")
 DATAPATH="$BASEPATH/data"
 REPOPATH="$DATAPATH/repos"
+
+if [ "$1" = "" ]; then
+    ls -1 "$DATAPATH/repos"
+    exit 0
+fi
+
 ORGA_PATH=$(readlink -m "$REPOPATH/$1")
 if [ ! -d "$ORGA_PATH" ]; then
     echo "No organisation $1" >&2
     exit 1
 fi
 
-find "$ORGA_PATH" -maxdepth 1 -name "*.git" |sed -e's/.git\s*$//'
+find "$ORGA_PATH" -maxdepth 1 -name "*.git" -exec basename -s .git {} \;
