@@ -21,7 +21,7 @@ log() {
 
 create_orga() {
     mkdir -p "$REPOPATH/$ORGA"
-    "$SCRIPTPATH"/own-orga "$ORGA"
+    "$SCRIPTPATH"/own-orga "$ORGA" > /dev/null
 }
 
 init_repo() {
@@ -47,7 +47,7 @@ if "$SCRIPTPATH/check-permissions" "$ORGA" ; then
     git-receive-pack "$REPOPATH/$ORGA/$REPO"
 else
     if "$SCRIPTPATH/is-abandoned" "$ORGA"; then
-        "$SCRIPTPATH/own-orga" "$ORGA"
+        "$SCRIPTPATH/own-orga" "$ORGA" > /dev/null
         log "Preparing push to $REPOPATH/$ORGA/$REPO"
         git-receive-pack "$REPOPATH/$ORGA/$REPO"
     fi

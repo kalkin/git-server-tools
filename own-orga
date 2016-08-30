@@ -13,10 +13,19 @@ SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 BASEPATH=$(dirname "$SCRIPTPATH")
 
+own_orga() {
+    ln -s "../../repos/$ORGANIZATION" "$BASEPATH/data/ids/$ID/$ORGANIZATION"
+    echo "Orga $ORGANIZATION is now owned by $ID"
+    exit 0
+}
 
 
 mkdir -p "$BASEPATH/data/ids/$ID"
-ln -s "../../repos/$ORGANIZATION" "$BASEPATH/data/ids/$ID/$ORGANIZATION"
-echo "Orga $ORGANIZATION is now owned by $ID"
+if "$SCRIPTPATH/is-abandoned" "$ORGANIZATION"; then
+    own_orga
+else
+    "$SCRIPTPATH/check-permission" admin && own_orga
+fi
+exit 1
 
 # vim: set: ft=SHELL
