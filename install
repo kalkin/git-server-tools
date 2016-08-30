@@ -60,7 +60,7 @@ update_submodule(){
     git submodule update --remote --merge \"\$1\"
     git add \"\$1\"
     if  ! git commit --quiet --author \"\$AUTHOR\" --message \"Update submodules \$1\" 2>&1 1> /dev/null; then
-        echo submodule bin did not change >&2
+        echo submodule \"\$1\" did not change >&2
     fi
 }
 update_submodule bin
