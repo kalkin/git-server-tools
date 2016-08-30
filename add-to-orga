@@ -1,5 +1,11 @@
 #!/bin/sh
 set -e
+# Absolute path to this script, e.g. /home/user/bin/foo.sh
+SCRIPT=$(readlink -f "$0")
+# Absolute path this script is in, thus /home/user/bin
+SCRIPTPATH=$(dirname "$SCRIPT")
+BASEPATH=$(dirname "$SCRIPTPATH")
+DATAPATH="$BASEPATH/data"
 
 if [ -z "${USER_TOKEN}" ]; then
     echo "No user token provided" >&2
@@ -14,6 +20,7 @@ fi
 ORGA="$1"
 OTHER_TOKEN="$2"
 "$SCRIPTPATH/check-permissions" "$ORGA"
-ln -s "../../repos/$ORGA" "$BASEPATH/data/ids/$OTHER_TOKEN/$ORGA"
+[ ! -d "$DATAPATH/ids/$OTHER_TOKEN" ] && mkdir -p "$DATAPATH/ids/$OTHER_TOKEN"
+ln -s "../../repos/$ORGA" "$DATAPATH/ids/$OTHER_TOKEN/$ORGA"
 echo "Orga $ORGANIZATION is now owned by $OTHER_TOKEN"
 exit 0
