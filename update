@@ -6,7 +6,10 @@ SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 BASEPATH=$(dirname "$SCRIPTPATH")
 
-"$SCRIPTPATH/check-permissions" admin
-"$BASEPATH/update"
+if "$SCRIPTPATH/check-permissions" admin; then
+    "$BASEPATH/update"
+else
+    echo "Not allowed" >&2
+fi
 
 
