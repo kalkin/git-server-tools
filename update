@@ -9,8 +9,6 @@ DATAPATH="$BASEPATH/data"
 REPOPATH="$DATAPATH/repos"
 
 update_submodule(){
-    cd "$REPOPATH/$1.git" > /dev/null
-    git fetch --quiet origin master:master
     cd "$BASEPATH" > /dev/null || (echo "Couldn't cd in $BASEPATH" >&2 && exit 2)
     git submodule update --remote --merge "$1"
     git add "$1"
@@ -20,7 +18,11 @@ update_submodule(){
 }
 
 if "$SCRIPTPATH/check-permissions" admin; then
+    cd "$REPOPATH/admin/git-server-tools.git"
+    git fetch --quiet origin master:master
     update_submodule bin || echo "Submodule bin did not change" >&2
+    cd "$REPOPATH/admin/thinssh.git"
+    git fetch --quiet origin master:master
     update_submodule thinssh || echo "Submodule thinssh did not change" >&2
 else
     echo "permission denied" >&2
