@@ -6,7 +6,7 @@ printf '%s' '#!/bin/sh
 #########################################################################
 
 set -e 
-GIT_URL=ssh://localhost:2222/kalkin
+GIT_URL=https://github.com/kalkin
 
 if [ ! -d .git/ ]; then
     git init .
