@@ -15,7 +15,6 @@ DATAPATH="$BASEPATH/data"
 ID="$USER_TOKEN"
 ORGA=$1
 ORGA_PATH="$DATAPATH/ids/$ID/$ORGA"
-echo "$ORGA_PATH"
 
 if [ -d "$ORGA_PATH" ]; then
     exit 0
