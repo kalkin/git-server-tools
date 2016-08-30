@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+
+if [ -z "${USER_TOKEN}" ]; then
+    echo "No user token provided" >&2
+    exit 1
+fi
+
+if [ ! $# -eq 2 ]; then
+    echo "usage: add-to-user ORGA USER_TOKEN" >&2
+    exit 1
+fi
+
+ORGA="$1"
+OTHER_TOKEN="$2"
+"$SCRIPTPATH/check-permissions" "$ORGA"
+ln -s "../../repos/$ORGA" "$BASEPATH/data/ids/$OTHER_TOKEN/$ORGA"
+echo "Orga $ORGANIZATION is now owned by $OTHER_TOKEN"
+exit 0
