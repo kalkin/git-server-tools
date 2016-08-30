@@ -12,12 +12,14 @@ update_submodule(){
     cd "$BASEPATH" > /dev/null || (echo "Couldn't cd in $BASEPATH" >&2 && exit 2)
     git submodule update --remote --merge "$1"
     git add "$1"
-    if  ! git commit --quiet --author "$AUTHOR" --message "Update submodules $1" 1> /dev/null 2>&1; then
+    if  ! git commit --quiet --message "Update submodules $1" 1> /dev/null 2>&1; then
         echo submodule "$1" did not change >&2
     fi
 }
 
 if "$SCRIPTPATH/check-permissions" admin; then
+    git config user.email "marvin@example.com"
+    git config user.name "Marvin the Paranoid Android"
     cd "$REPOPATH/admin/git-server-tools.git"
     git fetch --force --quiet origin master:master
     update_submodule bin || echo "Submodule bin did not change" >&2
