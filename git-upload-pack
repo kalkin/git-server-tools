@@ -12,5 +12,6 @@ REPOPATH="$DATAPATH/repos"
 
 ORGA=$(echo "$1"|cut -d'/' -f2)
 REPO=$(echo "$1"|cut -d'/' -f3-)
+REPO=$(basename -s .git "$REPO")
 
-git-upload-pack "$REPOPATH/$ORGA/$REPO"
+git-upload-pack "$REPOPATH/$ORGA/$REPO.git"
