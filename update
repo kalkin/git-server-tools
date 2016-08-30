@@ -9,7 +9,7 @@ DATAPATH="$BASEPATH/data"
 REPOPATH="$DATAPATH/repos"
 
 update_submodule(){
-    cd "$REPOPATH/$1" > /dev/null
+    cd "$REPOPATH/$1.git" > /dev/null
     git fetch --quiet origin master:master
     cd "$BASEPATH" > /dev/null || (echo "Couldn't cd in $BASEPATH" >&2 && exit 2)
     git submodule update --remote --merge "$1"
