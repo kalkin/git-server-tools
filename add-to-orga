@@ -7,7 +7,7 @@ if [ -z "${USER_TOKEN}" ]; then
 fi
 
 if [ ! $# -eq 2 ]; then
-    echo "usage: add-to-user ORGA USER_TOKEN" >&2
+    echo "usage: add-to-user ORGA MY_TOKEN" >&2
     exit 1
 fi
 
