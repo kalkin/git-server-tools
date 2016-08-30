@@ -18,7 +18,7 @@ REPOS_DIR="$DATA_DIR/repos"
 TOKENS_DIR="$DATA_DIR/ids"
 
 [ ! -d "$TOKENS_DIR" ] && mkdir -p "$TOKENS_DIR"
-touch .gitignore
+echo log > .gitignore
 if [ ! -f "$TOKENS_DIR/.keep" ]; then
     touch "$TOKENS_DIR/.keep"
     echo "$TOKENS_DIR/*" >> .gitignore
