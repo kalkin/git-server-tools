@@ -24,7 +24,7 @@ mkdir -p "$BASEPATH/data/ids/$ID"
 if "$SCRIPTPATH/is-abandoned" "$ORGANIZATION"; then
     own_orga
 else
-    "$SCRIPTPATH/check-permission" admin && own_orga
+    "$SCRIPTPATH/check-permissions" admin && own_orga
 fi
 exit 1
 
