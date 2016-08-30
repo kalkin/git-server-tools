@@ -9,8 +9,9 @@ DATAPATH="$BASEPATH/data"
 REPOPATH="$DATAPATH/repos"
 
 ID="$USER_TOKEN"
-ORGA=$(echo "$1"|cut -d'/' -f1)
-REPO=$(echo "$1"|cut -d'/' -f2-)
+ORGA=$(echo "$1"|cut -d'/' -f-2)
+ORGA=$(basename "$ORGA")
+REPO=$(echo "$1"|cut -d'/' -f3-)
 
 "$SCRIPTPATH"/create-id "$ID" 2>/dev/null 
 log() {
@@ -19,7 +20,7 @@ log() {
 
 create_orga() {
     mkdir -p "$REPOPATH/$ORGA"
-    "$SCRIPTPATH"/own-orga "$ID" "$ORGA"
+    "$SCRIPTPATH"/own-orga "$ORGA"
 }
 
 init_repo() {
@@ -38,7 +39,7 @@ if [ ! -d "$REPOPATH/$ORGA/$REPO" ]; then
     init_repo
 fi
 
-if "$SCRIPTPATH/check-permissions" "$ID" "$ORGA" ; then
+if "$SCRIPTPATH/check-permissions" "$ORGA" ; then
 # echo "Executing git-receive-pack now"
 # git-receive-pack "$REPOPATH/$ORGA/$REPO"
     log "Preparing push to $REPOPATH/$ORGA/$REPO"
