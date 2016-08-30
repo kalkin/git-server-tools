@@ -40,9 +40,9 @@ fi
 git clone --bare "$GIT_URL/git-server-tools" "$REPOS_DIR/admin/git-server-tools.git"
 git clone --bare "$GIT_URL/thinssh" "$REPOS_DIR/admin/thinssh.git"
 
-git submodule add "./$REPOS_DIR/admin/git-server-tools" bin --quiet
+git submodule add -b master "./data/repos/admin/git-server-tools" bin --quiet
 git commit --author "$AUTHOR" --message "Add git-server-tools as bin/" --signoff
-git submodule add "./$REPOS_DIR/admin/thinssh" thinssh
+git submodule add -b master "./data/repos/admin/thinssh" thinssh
 echo "#!/bin/sh
 exec thinssh/bin/thinssh.$(uname -m)" > git-server
 chmod +x git-server
