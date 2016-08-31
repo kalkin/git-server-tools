@@ -1,0 +1,21 @@
+#!/bin/sh
+set -e
+SCRIPT=$(readlink -f "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+. "$SCRIPTPATH/_helper"
+
+USAGE="usage: remotes ORGA/REPO"
+
+if [ ! $# = 1 ]; then 
+	exit_err 1 "$USAGE"
+fi
+
+BASEPATH=$(dirname "$SCRIPTPATH")
+DATAPATH="$BASEPATH/data"
+REPOPATH="$DATAPATH/repos"
+
+GIT_DIR=$(get_git_dir "$REPOPATH" "$1")
+result=$(git --git-dir="$GIT_DIR" remote -v|sed -e"s/\s\+/ /g"|cut -d" " -f1-2 |uniq)
+name=$(sanitize_repo_input "$1")
+echo "$name $result"
+
