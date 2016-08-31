@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+SCRIPT=$(readlink -f "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+. "$SCRIPTPATH/_helper"
+BASEPATH=$(dirname "$SCRIPTPATH")
+DATAPATH="$BASEPATH/data"
+REPOPATH="$DATAPATH/repos"
+
+ORGA=$(get_orga "$1")
+GIT_DIR=$(get_git_dir "$REPOPATH" "$1")
+
+if ! "$SCRIPTPATH/check-permissions" "$ORGA"; then
+    exit_err 1 "permission denied"
+fi
+
+[ ! -d "$GIT_DIR" ] && exit_err 1 "repo does not exist"
+git --git-dir="$GIT_DIR" fetch --all
+
