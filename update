@@ -10,7 +10,7 @@ REPOPATH="$DATAPATH/repos"
 
 update_submodule(){
     cd "$BASEPATH" || (echo "Couldn't cd in $BASEPATH" >&2 && exit 2)
-    git submodule update --remote --merge "$1"
+    git submodule update --remote --force "$1"
     git add "$1"
     if  ! git commit --quiet --message "Update submodules $1"; then
         echo submodule "$1" did not change >&2
