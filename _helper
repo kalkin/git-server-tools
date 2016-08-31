@@ -41,3 +41,33 @@ exit_err() {
     print_err "$2"
     exit "$1"
 }
+
+get_orga() {
+    result=$(sanitize_repo_input "$1"|cut -d"/" -f1)
+    echo "$result"
+}
+
+get_repo_name() {
+    result=$(sanitize_repo_input "$1"|cut -d"/" -f2)
+    result=$(basename -s .git "$result")
+    echo "$result"
+}
+
+print_err() {
+    echo "$1" >&2
+}
+
+exit_err() {
+    print_err "$2"
+    exit "$1"
+}
+
+log() {
+    echo "$1" >> "$BASEPATH/log"
+}
+
+number_of_args() {
+    if [ ! "$#" = "$1" ]; then 
+        echo "$2"
+    fi
+}

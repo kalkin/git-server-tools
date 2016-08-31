@@ -1,0 +1,53 @@
+#!/bin/sh
+set -e
+SCRIPT=$(readlink -f "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+. "$SCRIPTPATH/_helper"
+
+
+USAGE="usage: mirror ORGA/REPO URL"
+
+if [ ! $# = 2 ]; then 
+	exit_err 1 "$USAGE"
+fi
+
+BASEPATH=$(dirname "$SCRIPTPATH")
+DATAPATH="$BASEPATH/data"
+REPOPATH="$DATAPATH/repos"
+
+ORGA=$(get_orga "$1")
+
+GIT_DIR=$(get_git_dir "$REPOPATH" "$1")
+REPO_NAME=$(get_repo_name "$1")
+URL="$2"
+if  case "$URL" in 
+    http://*) false;; 
+    https://*) false;; 
+    ssh://*) false;; 
+    git://*) false;; 
+    *) true;; 
+esac; 
+then
+    exit_err 1 "invalid url: only http(s), ssh and git"
+fi
+
+log() {
+    echo "$1" >> "$BASEPATH/log"
+}
+
+
+clone() {
+    log "mirroring $URL to $ORGA/$REPO_NAME"
+    git clone --bare "$URL" "$GIT_DIR"
+}
+
+[ -d "$GIT_DIR" ] && exit_error 1 "repo already exists"
+
+if "$SCRIPTPATH/check-permissions" "$ORGA" ; then
+    clone
+elif "$SCRIPTPATH/own-orga" "$ORGA"; then
+    clone
+else
+    exit_err 2 "permission denied"
+fi
+
