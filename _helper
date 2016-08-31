@@ -1,0 +1,43 @@
+#!/bin/sh
+
+set -e
+
+# Sanitizes user inputed orga/repo path & returns orga/repo.git
+sanitize_repo_input() {
+	temp="${1%/}" 
+	temp="${temp#/}" 
+	orga=$(echo "$temp"|cut -d"/" -f1) 
+    if  case "$orga" in .*) true;; _*) true;; *) false;; esac; then
+        echo "invalid path" >&2
+        exit 1
+    fi
+    name=$(echo "$temp"|cut -d"/" -f2-)
+	name=$(basename -s .git "$name")
+    name="$name.git"
+	echo "$orga/$name"
+}
+
+get_git_dir() {
+    git_dir=$(sanitize_repo_input "$2")
+    echo "$1/$git_dir"
+}
+
+get_orga() {
+    result=$(sanitize_repo_input "$1"|cut -d"/" -f1)
+    echo "$result"
+}
+
+get_repo_name() {
+    result=$(sanitize_repo_input "$1"|cut -d"/" -f2)
+    result=$(basename -s .git "$result")
+    echo "$result"
+}
+
+print_err() {
+    echo "$1" >&2
+}
+
+exit_err() {
+    print_err "$2"
+    exit "$1"
+}
