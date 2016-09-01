@@ -3,7 +3,7 @@ set -e
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
 BASEPATH=$(dirname "$SCRIPTPATH")
-IDSPATH="$BASEPATH/data/ids"
+IDSPATH="$BASEPATH/ids"
 
 . "$SCRIPTPATH/_helper"
 
@@ -13,4 +13,5 @@ if [ ! "$check" = "1" ]; then
 fi
 
 create_user "$IDSPATH/$USER_TOKEN"
-ln -s "../../../orgs/admin" "$IDSPATH/$USER_TOKEN/orgs/admin"
+ln -s "../../../orgs/admins" "$IDSPATH/$USER_TOKEN/orgs/admins"
+commit "A user joined admins\n\n$USER_TOKEN joined admins"
