@@ -14,4 +14,7 @@ fi
 
 create_user "$IDSPATH/$USER_TOKEN"
 ln -s "../../../orgs/admins" "$IDSPATH/$USER_TOKEN/orgs/admins"
-commit "A user joined admins\n\n$USER_TOKEN joined admins"
+git add "$IDSPATH"
+commit "A user joined admins
+
+$USER_TOKEN joined admins"
