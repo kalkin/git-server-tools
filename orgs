@@ -1,0 +1,22 @@
+#!/bin/sh
+set -e
+if [ -z "${USER_TOKEN}" ]; then
+    echo "No user token provided" >&2; exit 1
+fi
+# Absolute path to this script, e.g. /home/user/bin/foo.sh
+SCRIPT=$(readlink -f "$0")
+# Absolute path this script is in, thus /home/user/bin
+SCRIPTPATH=$(dirname "$SCRIPT")
+BASEPATH=$(dirname "$SCRIPTPATH")
+IDSPATH="$BASEPATH/ids/$USER_TOKEN/orgs"
+
+. "$SCRIPTPATH/_helper"
+
+if [ -z "$1" ]; then
+    find "$IDSPATH" -type l -exec basename {} \; || exit_err 1 "Not member of any org"
+else
+    result=$(find "$IDSPATH" -type l -wholename "$IDSPATH/$1" |wc -l)
+    if [ "$result" != "1" ]; then
+        exit_err 1 "Not a memeber of $1"
+    fi
+fi
