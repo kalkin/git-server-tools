@@ -12,17 +12,4 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 BASEPATH=$(dirname "$SCRIPTPATH")
 DATAPATH="$BASEPATH/data"
 
-ID="$USER_TOKEN"
-if [ -d "$DATAPATH/ids/$ID/admin" ]; then
-    # user belongs to admin orga he is allowed to do everything
-    exit 0
-fi
-ORGA=$1
-ORGA_PATH="$DATAPATH/ids/$ID/$ORGA"
-
-if [ -d "$ORGA_PATH" ]; then
-    exit 0
-else
-    exit 1
-fi
-
+[ -d "$DATAPATH/ids/$USER_TOKEN/$1" ]
