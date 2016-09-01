@@ -16,43 +16,64 @@ AUTHOR="Marvin the Paranoid Android <marvin@example.com>"
 DATA_DIR="data"
 REPOS_DIR="$DATA_DIR/repos"
 TOKENS_DIR="$DATA_DIR/ids"
+ORGS_DIR="$DATA_DIR/orgs"
+export GIT_ALLOW_PROTOCOL="ext:ssh:https"
 
-[ ! -d "$TOKENS_DIR" ] && mkdir -p "$TOKENS_DIR"
-echo log > .gitignore
-if [ ! -f "$TOKENS_DIR/.keep" ]; then
-    touch "$TOKENS_DIR/.keep"
-    echo "$TOKENS_DIR/*" >> .gitignore
-    git add "$TOKENS_DIR/.keep" .gitignore -f
-    git commit --signoff --author "$AUTHOR" --message "Create $TOKENS_DIR"
-fi
+commit() { git commit --quiet --signoff --author "$AUTHOR" --message "$1"; }
 
+submodule_add() { git submodule add -b master "ext::git --namespace=admin %s $1" "$2"; }
 
-[ ! -d "$REPOS_DIR" ] && mkdir -p "$REPOS_DIR" 
-if [ ! -f "$REPOS_DIR/.keep" ] ; then 
-    touch "$REPOS_DIR/.keep"
-    echo "$REPOS_DIR/*" >> .gitignore
-    git add "$REPOS_DIR/.keep" .gitignore -f
-    git commit --signoff --author "$AUTHOR" --message "Create $REPOS_DIR"
-fi
+migrate() {
+    TMP_DIR="tmp"
+    mkdir -p "$TMP_DIR"
+    echo "Checking out $1"
+    git clone --quiet --bare "$GIT_URL/$1" "$TMP_DIR/$1"
+    src_repo="$TMP_DIR/$1"
+    repo_name=$(git --git-dir="$src_repo" rev-list --max-parents=0 HEAD)
+    dst="$REPOS_DIR/$repo_name.git"
+    git init --bare "$dst" --quiet
+    git --git-dir="$src_repo" remote add _migrate "ext::git --namespace=admin %s $dst"
+    git --git-dir="$src_repo" --namespace=admin push _migrate --all --quiet
+    git --git-dir="$dst" remote add origin "$GIT_URL/$1"
+    echo "$dst"
+    submodule_add "$dst" "$2"
+    ln -s  "../../repos/$repo_name.git" "$ORGS_DIR/admin/$1"
+    rm -rf "$TMP_DIR"
+}
 
-[ ! -d "$REPOS_DIR/admin" ] && mkdir -p "$REPOS_DIR/admin" 
+create_dir() {
+    mkdir -p "$1"
+    touch "$1/.keep"
+    echo "$1/*" >> .gitignore
+    git add "$1/.keep" ".gitignore" -f
+    commit "Create $1"
+}
 
-git clone --bare "$GIT_URL/git-server-tools" "$REPOS_DIR/admin/git-server-tools.git"
-git clone --bare "$GIT_URL/thinssh" "$REPOS_DIR/admin/thinssh.git"
+create_dir $TOKENS_DIR
+create_dir $REPOS_DIR
+create_dir $ORGS_DIR
+mkdir "$ORGS_DIR/admin"
 
-git submodule add -b master "./data/repos/admin/git-server-tools" bin --quiet
-git commit --author "$AUTHOR" --message "Add git-server-tools as bin/" --signoff
-git submodule add -b master "./data/repos/admin/thinssh" thinssh
+migrate "git-server-tools" "bin"
+migrate thinssh "thinssh"
+
+echo "1" > .schema_version
+git add .schema_version
+commit "Set schema_version to 1"
+
 echo "#!/bin/sh
 exec thinssh/bin/thinssh.$(uname -m)" > git-server
 chmod +x git-server
 git add git-server
-git commit --author "$AUTHOR" --message "Add thinssh/" --signoff
+commit "Add thinssh/"
 if [ ! -f host_key ]; then
     ssh-keygen -t ed25519 -f host_key -N ""
 fi
-git add host_key host_key.pub
-git commit --author "$AUTHOR" --message "Add ssh key" --signoff
+git add host_key
+if [ -f host_key.pub ]; then
+    git add host_key.pub
+fi
+commit "Add ssh key"
 rm install
 
 #############################################################################
@@ -64,4 +85,5 @@ rm install
 # 3. After execution just start "./git-server"
 # 
 ##############################################################################
+# vim: tw=0
 '
