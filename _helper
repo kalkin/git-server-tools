@@ -80,3 +80,9 @@ number_of_args() {
         echo "$2"
     fi
 }
+
+commit() {
+    git config user.email "marvin@example.com"
+    git config user.name "Marvin the Paranoid Android"
+    git commit --quiet --message "$1"
+}
