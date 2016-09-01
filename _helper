@@ -66,6 +66,15 @@ log() {
     echo "$1" >> "$BASEPATH/log"
 }
 
+repo_name(){
+    git --git-dir="$1" rev-list --max-parents=0 HEAD
+}
+
+create_user() {
+    mkdir -p "$1/orgs"
+    mkdir -p "$1/repos"
+}
+
 number_of_args() {
     if [ ! "$#" = "$1" ]; then 
         echo "$2"

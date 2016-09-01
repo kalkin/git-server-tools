@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+SCRIPT=$(readlink -f "$0")
+SCRIPTPATH=$(dirname "$SCRIPT")
+BASEPATH=$(dirname "$SCRIPTPATH")
+IDSPATH="$BASEPATH/data/ids"
+
+. "$SCRIPTPATH/_helper"
+
+check=$(find "$IDSPATH" -type d| wc -l)
+if [ ! "$check" = "1" ]; then
+    exit_err 1 "setup is done"
+fi
+
+create_user "$IDSPATH/$USER_TOKEN"
+ln -s "../../../orgs/admin" "$IDSPATH/$USER_TOKEN/orgs/admin"
