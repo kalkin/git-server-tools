@@ -6,11 +6,10 @@ SCRIPT=$(readlink -f "$0")
 # Absolute path this script is in, thus /home/user/bin
 SCRIPTPATH=$(dirname "$SCRIPT")
 BASEPATH=$(dirname "$SCRIPTPATH")
-DATAPATH="$BASEPATH/data"
-REPOPATH="$DATAPATH/repos"
+REPOPATH="$BASEPATH/repos"
 
 if [ "$1" = "" ]; then
-    ls -1 "$DATAPATH/repos"
+    ls -1 "$REPOPATH"
     exit 0
 fi
 
@@ -20,4 +19,4 @@ if [ ! -d "$ORGA_PATH" ]; then
     exit 1
 fi
 
-find "$ORGA_PATH" -maxdepth 1 -name "*.git" -exec basename -s .git {} \;
+find "$ORGA_PATH" -maxdepth 1 -type l -name "*.git" -exec basename -s .git {} \;
