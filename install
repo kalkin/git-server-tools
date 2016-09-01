@@ -14,14 +14,22 @@ fi
 
 AUTHOR="Marvin the Paranoid Android <marvin@example.com>" 
 DATA_DIR="data"
-REPOS_DIR="$DATA_DIR/repos"
-TOKENS_DIR="$DATA_DIR/ids"
-ORGS_DIR="$DATA_DIR/orgs"
+REPOS_DIR="repos"
+TOKENS_DIR="ids"
+ORGS_DIR="orgs"
 export GIT_ALLOW_PROTOCOL="ext:ssh:https"
 
 commit() { git commit --quiet --signoff --author "$AUTHOR" --message "$1"; }
 
-submodule_add() { git submodule add -b master "ext::git --namespace=admin %s $1" "$2"; }
+submodule_add() { git submodule add -b master "ext::git --namespace=admins %s $1" "$2"; }
+
+create_dir() {
+    echo "Creating dir $1"
+    mkdir -p "$1"
+    touch "$1/.keep"
+    git add "$1/.keep"
+    commit "Create $1"
+}
 
 migrate() {
     TMP_DIR="tmp"
@@ -30,29 +38,33 @@ migrate() {
     git clone --quiet --bare "$GIT_URL/$1" "$TMP_DIR/$1"
     src_repo="$TMP_DIR/$1"
     repo_name=$(git --git-dir="$src_repo" rev-list --max-parents=0 HEAD)
-    dst="$REPOS_DIR/$repo_name.git"
+    dst="$DATA_DIR/$repo_name.git"
     git init --bare "$dst" --quiet
-    git --git-dir="$src_repo" remote add _migrate "ext::git --namespace=admin %s $dst"
-    git --git-dir="$src_repo" --namespace=admin push _migrate --all --quiet
+    git --git-dir="$src_repo" remote add _migrate "ext::git --namespace=admins %s $dst"
+    git --git-dir="$src_repo" --namespace=admins push _migrate --all --quiet
     git --git-dir="$dst" remote add origin "$GIT_URL/$1"
     echo "$dst"
+    ln -s "../../$DATA_DIR/$repo_name.git" "$ORGS_DIR/admins/$1.git"
+    ln -s "../../$DATA_DIR/$repo_name.git" "$REPOS_DIR/admins/$1.git"
+    git add "$ORGS_DIR" "$REPOS_DIR"
+    commit "Added repo admins/$1"
     submodule_add "$dst" "$2"
-    ln -s  "../../repos/$repo_name.git" "$ORGS_DIR/admin/$1"
+    commit "Installed $1 to $2"
     rm -rf "$TMP_DIR"
 }
 
-create_dir() {
-    mkdir -p "$1"
-    touch "$1/.keep"
-    echo "$1/*" >> .gitignore
-    git add "$1/.keep" ".gitignore" -f
-    commit "Create $1"
-}
-
-create_dir $TOKENS_DIR
-create_dir $REPOS_DIR
-create_dir $ORGS_DIR
-mkdir "$ORGS_DIR/admin"
+echo "install" >> .gitignore
+git add .gitignore
+commit "Add install to .gitignore"
+create_dir "$DATA_DIR"
+create_dir "$TOKENS_DIR"
+create_dir "$REPOS_DIR"
+create_dir "$ORGS_DIR"
+create_dir "$ORGS_DIR/admins"
+create_dir "$REPOS_DIR/admins"
+echo "data/*" >> .gitignore
+git add .gitignore
+commit "Ignore data/ dir contents"
 
 migrate "git-server-tools" "bin"
 migrate thinssh "thinssh"
@@ -62,10 +74,10 @@ git add .schema_version
 commit "Set schema_version to 1"
 
 echo "#!/bin/sh
-exec thinssh/bin/thinssh.$(uname -m)" > git-server
+exec thinssh/bin/thinssh.$(uname -m) \"\$@\"" > git-server
 chmod +x git-server
 git add git-server
-commit "Add thinssh/"
+commit "Add git-server script"
 if [ ! -f host_key ]; then
     ssh-keygen -t ed25519 -f host_key -N ""
 fi
