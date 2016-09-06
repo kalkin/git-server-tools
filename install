@@ -34,16 +34,21 @@ create_dir() {
 migrate() {
     TMP_DIR="tmp"
     mkdir -p "$TMP_DIR"
-    echo "Checking out $1"
-    git clone --quiet --bare "$GIT_URL/$1" "$TMP_DIR/$1"
     src_repo="$TMP_DIR/$1"
-    repo_name=$(git --git-dir="$src_repo" rev-list --max-parents=0 HEAD)
+    echo "Checking out $1  to $src_repo"
+    git clone --quiet "$GIT_URL/$1" "$src_repo"
+    cd "$src_repo"
+    repo_name=$(git rev-list --max-parents=0 HEAD)
     dst="$DATA_DIR/$repo_name.git"
-    git init --bare "$dst" --quiet
-    git --git-dir="$src_repo" remote add _migrate "ext::git --namespace=admins %s $dst"
-    git --git-dir="$src_repo" --namespace=admins push _migrate --all --quiet
-    git --git-dir="$dst" remote add origin "$GIT_URL/$1"
-    echo "$dst"
+    git init --bare "../../$dst" --quiet
+    git remote add _migrate "../../$dst"
+    GIT_ALLOW_PROTOCOL=file GIT_NAMESPACE=admins git push _migrate --mirror
+    cd -
+    cd "$dst"
+    git symbolic-ref refs/namespaces/admins/HEAD  refs/namespaces/admins/refs/heads/master
+    git config transfer.hideRefs refs/remotes
+    git remote add origin "$GIT_URL/$1"
+    cd -
     ln -s "../../$DATA_DIR/$repo_name.git" "$ORGS_DIR/admins/$1.git"
     ln -s "../../$DATA_DIR/$repo_name.git" "$REPOS_DIR/admins/$1.git"
     git add "$ORGS_DIR" "$REPOS_DIR"
