@@ -7,11 +7,10 @@ SCRIPT=$(readlink -f "$0")
 # Absolute path this script is in, thus /home/user/bin
 SCRIPTPATH=$(dirname "$SCRIPT")
 BASEPATH=$(dirname "$SCRIPTPATH")
-DATAPATH="$BASEPATH/data"
-REPOPATH="$DATAPATH/repos"
+REPOPATH="$BASEPATH/repos"
 
 ORGA=$(echo "$1"|cut -d'/' -f2)
 REPO=$(echo "$1"|cut -d'/' -f3-)
 REPO=$(basename -s .git "$REPO")
 
-git-upload-pack "$REPOPATH/$ORGA/$REPO.git"
+GIT_NAMESPACE="$ORGA" git-upload-pack --strict "$REPOPATH/$ORGA/$REPO.git"
