@@ -1,4 +1,5 @@
 #!/bin/sh
+# shellcheck disable=SC2016
 printf '%s' '#!/bin/sh
 #########################################################################
 # This script will setup a git-server on your machine if copy pasted and
