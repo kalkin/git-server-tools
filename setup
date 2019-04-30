@@ -5,6 +5,7 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 BASEPATH=$(dirname "$SCRIPTPATH")
 IDSPATH="$BASEPATH/ids"
 
+# shellcheck source=_helper
 . "$SCRIPTPATH/_helper"
 
 check=$(find "$IDSPATH" -type d| wc -l)

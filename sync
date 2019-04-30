@@ -2,6 +2,7 @@
 set -e
 SCRIPT=$(readlink -f "$0")
 SCRIPTPATH=$(dirname "$SCRIPT")
+# shellcheck source=_helper
 . "$SCRIPTPATH/_helper"
 BASEPATH=$(dirname "$SCRIPTPATH")
 DATAPATH="$BASEPATH/data"

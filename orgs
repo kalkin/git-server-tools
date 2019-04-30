@@ -10,6 +10,7 @@ SCRIPTPATH=$(dirname "$SCRIPT")
 BASEPATH=$(dirname "$SCRIPTPATH")
 IDSPATH="$BASEPATH/ids/$USER_TOKEN/orgs"
 
+# shellcheck source=_helper
 . "$SCRIPTPATH/_helper"
 
 if [ -z "$1" ]; then
