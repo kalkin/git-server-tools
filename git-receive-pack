@@ -8,7 +8,6 @@ BASEPATH=$(dirname "$SCRIPTPATH")
 DATAPATH="$BASEPATH/data"
 REPOPATH="$DATAPATH/repos"
 
-ID="$USER_TOKEN"
 ORGA=$(echo "$1"|cut -d'/' -f-2)
 ORGA=$(basename "$ORGA")
 REPO=$(echo "$1"|cut -d'/' -f3-)
